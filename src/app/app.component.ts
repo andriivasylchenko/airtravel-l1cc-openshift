@@ -194,7 +194,6 @@ export class AppComponent implements OnInit {
           this.loadingData = false;
 
           // STEP 4 - get location safety score data using Amadeus APIs
-
           this.amadeusApi.getSafetyDetails(this.locationData.geoCode.latitude, this.locationData.geoCode.longitude).subscribe(safetyData => {
             console.debug('-- received safety data', safetyData);
             if (safetyData.data.length > 0) {
