@@ -1,0 +1,27 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* overriding some default angular material styles */
+.mat-expansion-panel-header-description {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 8px;
+}
+
+.mat-card-title-group+.mat-card-title-group {
+    padding-left: 16px;
+}
+
+.mat-card-header-text {
+    display: none;
+}
+
+.mat-datepicker-toggle {
+    vertical-align: bottom;
+}

@@ -1,0 +1,195 @@
+<!-- application header -->
+<mat-toolbar color="primary">
+  <span>AirTravel demo application</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-button aria-label="Settings" (click)="openSettings()">
+    <mat-icon>settings</mat-icon>
+  </button>
+</mat-toolbar>
+<!-- end of application header -->
+
+
+<div class="bounds">
+
+  <!-- flights search input panel -->
+  <div class="selector-wrapper" fxLayout="row" fxLayout.xs="column" fxFlexFill>
+
+    <div fxFlex="100" class="sec1">
+
+      <mat-form-field appearance="standard">
+        <mat-label>Departing from?</mat-label>
+        <input matInput placeholder="Chicago or Barcelona" [disabled]="disableEdit"
+          [(ngModel)]="flightsQuery.originLocationCode" (change)="validateQuery()">
+        <mat-icon matSuffix inline>flight_takeoff</mat-icon>
+        <mat-hint>City name</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="standard">
+        <mat-label>Going to?</mat-label>
+        <input matInput placeholder="New York or London" [disabled]="disableEdit"
+          [(ngModel)]="flightsQuery.destinationLocationCode" (change)="validateQuery()">
+        <mat-icon matSuffix inline>flight_land</mat-icon>
+        <mat-hint>City name</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="date-picker">
+        <mat-label>Departing</mat-label>
+        <input matInput [matDatepicker]="picker1" [disabled]="disableEdit" [(ngModel)]="flightsQuery.departureDate"
+          [min]="minDepartureDate" (dateChange)="validateQuery()">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="date-picker">
+        <mat-label>Returning</mat-label>
+        <input matInput [matDatepicker]="picker2" [disabled]="disableEdit" [(ngModel)]="flightsQuery.returnDate"
+          [min]="minReturnDate" (dateChange)="validateQuery()">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" [disabled]="disableSearch || loadingData"
+        (click)="initiateSearch()">
+        <mat-icon *ngIf="!loadingData ">search</mat-icon>
+        <mat-progress-spinner mode="indeterminate" diameter=17 class="flights-search-spinner"
+          *ngIf="loadingData"></mat-progress-spinner>
+        Find flights
+      </button>
+
+    </div>
+
+  </div>
+  <!-- end of flights search input panel -->
+
+  <!-- welcome card with a notice -->
+  <mat-card class="welcome-info" *ngIf="!disableEdit && !credentials.key" [@fadeInOut]>
+    Please fill the 
+    <a href="https://developers.amadeus.com/get-started/get-started-with-self-service-apis-335">Amadeus API</a> 
+    key & secret or toggle API emulation in 
+    <mat-icon inline aria-label="Settings">settings</mat-icon> <b>Settings</b>
+     before using this demo app.
+  </mat-card>
+  <!-- end of welcome card with a notice -->
+
+  <!-- search results -->
+  <div class="results-wrapper" fxLayout="row" fxLayout.xs="column" fxFlexFill>
+
+    <!-- flights offers panel 60% -->
+    <div fxFlex="60" class="sec2">
+
+      <div *ngIf="flightsOffers" [@fadeInOut]>
+        <mat-card class="offer-card" *ngFor="let offer of flightsOffers">
+
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-title>{{offer.price.grandTotal}}</mat-card-title>
+              <mat-card-subtitle>{{offer.price.currency}}</mat-card-subtitle>
+            </mat-card-title-group>
+            <mat-card-title-group>
+              <mat-card-title>{{formatAirlines(offer.validatingAirlineCodes, flightsDictionaries.carriers)}}
+              </mat-card-title>
+            </mat-card-title-group>
+          </mat-card-header>
+
+          <mat-card-content>
+
+            <mat-accordion multi="true" [@.disabled]="true">
+              <mat-expansion-panel *ngFor="let itinerary of offer.itineraries; index as i;">
+                <mat-expansion-panel-header class="right-aligned-header">
+                  <mat-panel-title>
+                    {{i == 1 ? 'Return flight' : 'Departure flight'}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    <mat-icon color="primary" inline>schedule</mat-icon>
+                    {{itinerary.duration | moment: 'duration' : 'HH:mm'}}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <table mat-table [dataSource]="itinerary.segments" class="mat-elevation-z8">
+
+                  <ng-container matColumnDef="departure">
+                    <th mat-header-cell *matHeaderCellDef> From </th>
+                    <td mat-cell *matCellDef="let element"> {{element.departure.iataCode}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="arrival">
+                    <th mat-header-cell *matHeaderCellDef> To </th>
+                    <td mat-cell *matCellDef="let element"> {{element.arrival.iataCode}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="duration">
+                    <th mat-header-cell *matHeaderCellDef> Duration </th>
+                    <td mat-cell *matCellDef="let element"> {{element.duration | moment: 'duration' : 'HH:mm'}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="departureAt">
+                    <th mat-header-cell *matHeaderCellDef> Departure </th>
+                    <td mat-cell *matCellDef="let element"> {{element.departure.at | moment: 'date' : 'LT'}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="arrivalAt">
+                    <th mat-header-cell *matHeaderCellDef> Arrival </th>
+                    <td mat-cell *matCellDef="let element"> {{element.arrival.at | moment: 'date' : 'LT'}} </td>
+                  </ng-container>
+
+                  <tr mat-header-row
+                    *matHeaderRowDef="['departure', 'arrival', 'duration', 'departureAt', 'arrivalAt']"></tr>
+                  <tr mat-row
+                    *matRowDef="let row; columns: ['departure', 'arrival', 'duration', 'departureAt', 'arrivalAt'];">
+                  </tr>
+                </table>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <!-- end of flights offers panel 60% -->
+
+    <!-- location and security score panel 40% -->
+    <div fxFlex="40" class="sec3">
+      <div *ngIf="locationData && flightsOffers" [@fadeInOut]>
+        <mat-card class="location-card">
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-title>{{locationData.address.cityName}}</mat-card-title>
+              <mat-card-subtitle *ngIf="safetyScore">{{checkRiskLevel(safetyScore.overall)}}</mat-card-subtitle>
+            </mat-card-title-group>
+            <mat-card-title-group *ngIf="safetyScore" [ngClass]="applyCSSClass('text', safetyScore.overall)">
+              <mat-card-title class="score-title">{{safetyScore.overall}}</mat-card-title>
+            </mat-card-title-group>
+          </mat-card-header>
+
+          <!-- safety score data -->
+          <mat-divider *ngIf="safetyScore || ( !foundSafetyData && foundSafetyData !== null )" [@fadeInOut]>
+          </mat-divider>
+          <mat-card-content>
+
+            <div class="no-safety-data" *ngIf="!foundSafetyData && foundSafetyData !== null" [@fadeInOut]>
+              No safety data available. Try using New York, London, Barcelona or Berlin as destination
+            </div>
+
+            <div class="scores-wrapper" fxLayout="coluumn wrap" *ngIf="safetyScore" [@fadeInOut]>
+
+              <div fxFlex="33" *ngFor="let score of safetyScoreSettings">
+                <mat-icon color="primary" inline aria-label="score.title">{{score.icon}}</mat-icon>
+                <p>
+                  {{score.title}}
+                </p>
+                <span [ngClass]="applyCSSClass('border', safetyScore[score.locator])">
+                  {{safetyScore[score.locator]}}
+                </span>
+              </div>
+            </div>
+
+          </mat-card-content>
+          <!-- end of safety score data -->
+        </mat-card>
+      </div>
+    </div>
+    <!-- end of location and security score panel 40% -->
+
+  </div>
+  <!-- end of search results -->
+
+</div>

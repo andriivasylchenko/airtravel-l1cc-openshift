@@ -1,0 +1,32 @@
+<!-- settings modal window -->
+
+<h1 mat-dialog-title>Application settings</h1>
+<mat-dialog-content>
+    <p>Please provide your Amadeus Developer API key and secret below. If you do not have them yet, start <a
+            href="https://developers.amadeus.com/register" target="_blank">here</a></p>
+    <p>
+        <mat-form-field>
+            <mat-label>API Key</mat-label>
+            <input matInput type="text" [(ngModel)]="data.credentials.key">
+        </mat-form-field>
+    </p>
+    <p>
+        <mat-form-field>
+            <mat-label>API Secret</mat-label>
+            <input matInput type="text" [(ngModel)]="data.credentials.secret">
+        </mat-form-field>
+    </p>
+    <p>
+        <mat-slide-toggle color="primary" [(ngModel)]="data.local">
+            Emulate Amadeus API calls
+        </mat-slide-toggle>
+    </p>
+    <p>
+        <mat-slide-toggle color="primary" [(ngModel)]="data.logs">
+            Enable logging to database
+        </mat-slide-toggle>
+    </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-flat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>

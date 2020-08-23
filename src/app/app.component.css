@@ -1,0 +1,109 @@
+/* adding spacer in application header to support buttons on the right */
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+/* limiting application width and centering it */
+.bounds {
+  max-width: 1024px;
+  margin: auto;
+}
+
+/* setting padding for grid columns */
+.sec1, .sec2, .sec3 {
+  padding: 16px;
+}
+
+/* margin for form inputs in flights search panel */
+.selector-wrapper .mat-form-field {
+  margin-right: 16px;
+}
+
+/* limiting width of departure and return date input fields */
+.date-picker {
+  max-width: 120px;
+}
+
+/* setting style to put spinner inside search button during API calls */
+.flights-search-spinner {
+  display: inline-block;
+  margin-right: 7px;
+}
+
+/* basic styles for warning message to fill the settings */
+.welcome-info {
+  margin: 16px 0;
+  border-left: 5px solid orange;
+}
+
+/* adding bottom padding to flights search results  */
+.offer-card {
+  padding-bottom: 16px;
+}
+
+/* making flights details table full size */
+table {
+  width: 100%;
+}
+
+/* below classes styling for safety icon/title/score */
+.scores-wrapper {
+  text-align: center;
+  justify-content: center;
+  padding: 0px 4px 26px 4px;
+}
+
+.scores-wrapper div {
+  padding-top: 32px;
+}
+
+.scores-wrapper .mat-icon {
+  font-size: 30px;
+}
+
+.scores-wrapper p {
+  padding: 0px 8px;
+  min-height: 40px;
+}
+
+.scores-wrapper span {
+  font-size: 20px;
+  width: 20px;
+  padding-bottom: 2px;
+}
+
+/* classes below are required to color code safety score values with text or border colors */
+.border-score-low {
+  border-bottom: 3px solid green;
+}
+
+.border-score-average {
+  border-bottom: 3px solid orange;
+}
+
+.border-score-high {
+  border-bottom: 3px solid red;
+}
+
+.score-low {
+  color:green;
+}
+
+.score-average {
+  color:orange;
+}
+
+.score-high {
+  color:red;
+}
+
+/* overall score for location */
+.score-title {
+  font-size: 40px;
+  padding: 10px;
+}
+
+/* padding for no safety data reply */
+.no-safety-data {
+  padding: 16px 0px;
+}
