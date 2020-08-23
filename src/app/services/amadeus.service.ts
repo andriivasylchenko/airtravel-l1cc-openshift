@@ -21,8 +21,8 @@ export class AmadeusService {
 
   // API credentials to use Amadeus API. Obtain yours by following the instructions https://developers.amadeus.com/get-started/get-started-with-self-service-apis-335
   private credentials: ApiCredentials = {
-    key: 'ORvTrWsrZyAx5LID8FqLgc7h56YzeQJ4',
-    secret: 'tFsLpw3JuRMNtheq'
+    key: null,
+    secret: null
   }
 
   constructor(private securityApi: SecurityService, private flightsApi: FlightsService, private locationsApi: LocationsService, private safetyApi: SafetyService) { }

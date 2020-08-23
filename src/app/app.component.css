@@ -39,6 +39,7 @@
 /* adding bottom padding to flights search results  */
 .offer-card {
   padding-bottom: 16px;
+  margin-bottom: 32px;
 }
 
 /* making flights details table full size */
