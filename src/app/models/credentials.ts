@@ -1,4 +1,4 @@
-export interface ApiCredentials {
+export interface Сredentials {
     key?: string;
     secret?: string;
 }

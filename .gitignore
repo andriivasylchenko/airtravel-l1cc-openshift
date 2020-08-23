@@ -43,3 +43,5 @@ testem.log
 Thumbs.db
 
 api_generator
+
+proxy.conf.json

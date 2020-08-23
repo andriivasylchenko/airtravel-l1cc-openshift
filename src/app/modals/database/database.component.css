@@ -1,0 +1,15 @@
+/* making logs table full size */
+table {
+  width: 100%;
+}
+
+/* spinner inside the button during data load */
+.search-spinner {
+  display: inline-block;
+  margin-right: 7px;
+}
+
+/* margin for inline input field for key/pass */
+.mat-form-field {
+  margin-right: 16px;
+}

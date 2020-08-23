@@ -36,6 +36,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 // custom things
 import { OauthInterceptor } from './interceptors/oauth.interceptor';
@@ -79,7 +80,7 @@ import { ErrorHandlerService } from './services/error-handler.service';
     MatBadgeModule,
     MatTableModule,
     MatGridListModule,
-    MatSnackBarModule 
+    MatSnackBarModule
   ],
   providers: [
     MatDatepickerModule,

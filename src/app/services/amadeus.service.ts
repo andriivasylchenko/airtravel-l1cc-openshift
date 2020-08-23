@@ -6,7 +6,7 @@ import { SafetyService } from '../../../api-safety';
 import { FlightsQuery } from '../models/flights-query';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
-import { ApiCredentials } from '../models/api-credentials';
+import { Сredentials } from '../models/credentials';
 import moment from 'moment';
 
 @Injectable({
@@ -17,10 +17,9 @@ export class AmadeusService {
   private accessToken: string = null;
 
   private runningLocal: boolean = false;
-  private dbLogs: boolean = false;
 
   // API credentials to use Amadeus API. Obtain yours by following the instructions https://developers.amadeus.com/get-started/get-started-with-self-service-apis-335
-  private credentials: ApiCredentials = {
+  private apiCredentials: Сredentials = {
     key: null,
     secret: null
   }
@@ -35,30 +34,23 @@ export class AmadeusService {
     } else return this.runningLocal;
   } 
 
-  // function to update or just provide a status of running local param
-  public verifyDbLogs(value?: boolean) {
-    if (value!== null && value !== undefined) {
-          this.dbLogs = value;
-          return this.dbLogs;
-    } else return this.dbLogs;
-  }
   
   // function to update or just provide credentials to Amadeus APIs
-  public verifyCredentials(api_key?, api_secret?) {
+  public verifyApiCredentials(api_key?, api_secret?) {
     if (api_key && api_secret) {
-          this.credentials = {
+          this.apiCredentials = {
             key: api_key,
             secret: api_secret
           };
-          return this.credentials;
-    } else return this.credentials;
+          return this.apiCredentials;
+    } else return this.apiCredentials;
   } 
 
   // function to obtain access token that is required to make any data call to Amadeus APIs
   public obtainToken(): Promise<any> {
 
     return new Promise((resolve, reject) => {
-      this.securityApi.getAccessToken('client_credentials', this.credentials.key, this.credentials.secret).subscribe(value => {
+      this.securityApi.getAccessToken('client_credentials', this.apiCredentials.key, this.apiCredentials.secret).subscribe(value => {
         if ("access_token" in value) {
           resolve(value);
         } else {

@@ -3,8 +3,9 @@ import { SafetyScore } from '../../api-safety';
 import { FlightOffer, CarrierEntry, Dictionaries } from '../../api-flights';
 import { Location } from 'api-locations';
 import { AmadeusService } from '../app/services/amadeus.service';
+import { DatabaseService } from '../app/services/database.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiCredentials } from './models/api-credentials';
+import { Сredentials } from './models/credentials';
 import { SafetyScoreParameters } from './models/safety-score-params'
 import { FlightsQuery } from './models/flights-query';
 import { SettingsDialog } from './modals/settings/settings.component';
@@ -33,9 +34,6 @@ import { trigger, style, state, animate, transition } from '@angular/animations'
   ]
 })
 export class AppComponent implements OnInit {
-
-  // Amadeus API key & secret
-  credentials: ApiCredentials = null;
 
   // search params
   flightsQuery: FlightsQuery = defaultSearchParams;
@@ -68,14 +66,14 @@ export class AppComponent implements OnInit {
     { title: 'LGBTQ Safety', locator: 'lgbtq', icon: 'looks' },
   ]
 
-  constructor(public amadeusApi: AmadeusService, public dialog: MatDialog, public alerts: AlertService) { }
+  constructor(public amadeusApi: AmadeusService, public databaseApi: DatabaseService, public dialog: MatDialog, public alerts: AlertService) { }
 
   // opening settings modal window
   openSettingsDialog(): void {
     console.debug('-- opening settings dialog');
     const dialogRef = this.dialog.open(SettingsDialog, {
       width: '500px',
-      data: { credentials: this.credentials, local: this.amadeusApi.verifyRunningLocal(), logs: this.amadeusApi.verifyDbLogs() }
+      data: { credentials: this.amadeusApi.verifyApiCredentials(), local: this.amadeusApi.verifyRunningLocal(), logs: this.databaseApi.verifyDbLogs() }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -85,9 +83,9 @@ export class AppComponent implements OnInit {
         console.debug('-- settings dialog was closed, syncing credentials');
 
         // syncing updates from settings dialog
-        this.credentials = result.credentials;
+        this.amadeusApi.verifyApiCredentials(result.credentials.key, result.credentials.secret);
         this.resetParams(result.local);
-        this.amadeusApi.verifyDbLogs(result.logs);
+        this.databaseApi.verifyDbLogs(result.logs);
       }
     });
   }
@@ -96,19 +94,18 @@ export class AppComponent implements OnInit {
    openDatabaseDialog(): void {
     console.debug('-- opening database dialog');
     const dialogRef = this.dialog.open(DatabaseDialog, {
-      width: '500px'
+      width: '700px',
+      data: { credentials: this.databaseApi.verifyDbCredentials() }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
-        console.debug('-- settings dialog was closed, no updates saved');
+        console.debug('-- database dialog was closed, no updates saved');
       } else {
-        console.debug('-- settings dialog was closed, syncing credentials');
+        console.debug('-- database dialog was closed, syncing credentials');
 
         // syncing updates from settings dialog
-        this.credentials = result.credentials;
-        this.resetParams(result.local);
-        this.amadeusApi.verifyDbLogs(result.logs);
+        this.databaseApi.verifyDbCredentials(result.credentials.key, result.credentials.secret);
       }
     });
   }
@@ -224,13 +221,18 @@ export class AppComponent implements OnInit {
               this.foundSafetyData = false;
             }
           })
+
+          // STEP 5 (OPTIONAL) - log query in DB
+          if (this.databaseApi.verifyDbLogs()) {
+            this.databaseApi.submitData(this.flightsQuery).subscribe(res => {
+              console.debug('-- submitted query log to db', res)
+            });
+          };
+          
         })
       })
     })
   }
 
-  ngOnInit() {
-    // get credentials (if any hard-coded) during component init
-    this.credentials = this.amadeusApi.verifyCredentials();
-  }
+  ngOnInit() {}
 }

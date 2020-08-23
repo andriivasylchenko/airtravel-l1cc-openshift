@@ -3,11 +3,69 @@
 <h1 mat-dialog-title>Database connection</h1>
 <mat-dialog-content>
     <p>In order for database connection to work, you should configure database instance and APIs on your node runtime</p>
+
     <p>
-        Data will be here soon
+        <mat-form-field>
+            <mat-label>Database service user</mat-label>
+            <input matInput type="text" [(ngModel)]="data.credentials.key">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Database service password</mat-label>
+            <input matInput type="text" [(ngModel)]="data.credentials.secret">
+        </mat-form-field>
     </p>
+
+
+    <div *ngIf="dblogs">
+
+        <div class="mat-body-strong"  *ngIf="dblogs.length == 0" [@fadeInOut]>
+            No logs found. 
+        </div>
+
+        <table mat-table [dataSource]="dblogs" class="mat-elevation-z8" *ngIf="dblogs.length > 0" [@fadeInOut]>
+
+            <ng-container matColumnDef="timestamp">
+                <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+                <td mat-cell *matCellDef="let element"> {{element.timestamp | moment: 'time' : 'L LT' }} </td>
+              </ng-container>
+    
+            <ng-container matColumnDef="departure">
+              <th mat-header-cell *matHeaderCellDef> From </th>
+              <td mat-cell *matCellDef="let element"> {{element.query.originLocationCode}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="arrival">
+              <th mat-header-cell *matHeaderCellDef> To </th>
+              <td mat-cell *matCellDef="let element"> {{element.query.destinationLocationCode}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="departure_date">
+              <th mat-header-cell *matHeaderCellDef> Departure date </th>
+              <td mat-cell *matCellDef="let element"> {{element.query.departureDate | moment: 'time' : 'L'}} </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="return_date">
+                <th mat-header-cell *matHeaderCellDef> Return date </th>
+                <td mat-cell *matCellDef="let element"> {{element.query.returnDate | moment: 'time' : 'L'}} </td>
+              </ng-container>
+    
+            <tr mat-header-row
+              *matHeaderRowDef="['timestamp', 'departure', 'arrival', 'departure_date', 'return_date']"></tr>
+            <tr mat-row
+              *matRowDef="let row; columns: ['timestamp', 'departure', 'arrival', 'departure_date', 'return_date'];">
+            </tr>
+          </table>
+
+    </div>
+
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-flat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
-    <button mat-flat-button color="warn" cdkFocusInitial>Clear data</button>
+    <button mat-flat-button color="primary" [mat-dialog-close] cdkFocusInitial>Ok</button>
+    <button mat-flat-button color="warn" (click)="clearLogs()" [disabled]="loadingLogsData" cdkFocusInitial>
+        <mat-progress-spinner mode="indeterminate" diameter=17 class="search-spinner"
+          *ngIf="loadingLogsData"></mat-progress-spinner>
+        <span *ngIf="loadingLogsData">Loading</span>
+        <span *ngIf="!loadingLogsData">Clear data</span>
+    </button>
 </mat-dialog-actions>
