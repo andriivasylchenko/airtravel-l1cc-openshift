@@ -2,7 +2,10 @@
 <mat-toolbar color="primary">
   <span>AirTravel demo application</span>
   <span class="toolbar-spacer"></span>
-  <button mat-button aria-label="Settings" (click)="openSettings()">
+  <button mat-button aria-label="Database modal" (click)="openDatabaseDialog()" *ngIf="amadeusApi.verifyDbLogs()">
+    <mat-icon>storage</mat-icon>
+  </button>
+  <button mat-button aria-label="Settings modal" (click)="openSettingsDialog()">
     <mat-icon>settings</mat-icon>
   </button>
 </mat-toolbar>
@@ -64,7 +67,7 @@
   <!-- welcome card with a notice -->
   <mat-card class="welcome-info" *ngIf="!disableEdit && !credentials.key" [@fadeInOut]>
     Please fill the 
-    <a href="https://developers.amadeus.com/get-started/get-started-with-self-service-apis-335">Amadeus API</a> 
+    <a href="https://developers.amadeus.com/get-started/get-started-with-self-service-apis-335" target="_blank">Amadeus API</a> 
     key & secret or toggle API emulation in 
     <mat-icon inline aria-label="Settings">settings</mat-icon> <b>Settings</b>
      before using this demo app.

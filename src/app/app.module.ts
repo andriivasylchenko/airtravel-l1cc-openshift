@@ -39,16 +39,18 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 // custom things
 import { OauthInterceptor } from './interceptors/oauth.interceptor';
-import { SettingsDialog } from './settings/settings.component';
+import { SettingsDialog } from './modals/settings/settings.component';
+import { DatabaseDialog } from './modals/database/database.component';
 import { MomentPipe } from './pipes/moment.pipe';
-import { ErrorHandlerService } from './services/error-handler.service'
+import { ErrorHandlerService } from './services/error-handler.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     SettingsDialog,
-    MomentPipe
+    DatabaseDialog,
+    MomentPipe,
   ],
   imports: [
     BrowserModule,

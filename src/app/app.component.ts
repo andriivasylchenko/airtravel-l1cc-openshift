@@ -7,7 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiCredentials } from './models/api-credentials';
 import { SafetyScoreParameters } from './models/safety-score-params'
 import { FlightsQuery } from './models/flights-query';
-import { SettingsDialog } from './settings/settings.component';
+import { SettingsDialog } from './modals/settings/settings.component';
+import { DatabaseDialog } from './modals/database/database.component';
 import moment from 'moment';
 import { defaultSearchParams, searchParamsMock } from './mocks/search-params';
 import { AlertService } from './services/alert.service';
@@ -67,14 +68,35 @@ export class AppComponent implements OnInit {
     { title: 'LGBTQ Safety', locator: 'lgbtq', icon: 'looks' },
   ]
 
-  constructor(private amadeusApi: AmadeusService, public dialog: MatDialog, public alerts: AlertService) { }
+  constructor(public amadeusApi: AmadeusService, public dialog: MatDialog, public alerts: AlertService) { }
 
   // opening settings modal window
-  openSettings(): void {
+  openSettingsDialog(): void {
     console.debug('-- opening settings dialog');
     const dialogRef = this.dialog.open(SettingsDialog, {
       width: '500px',
       data: { credentials: this.credentials, local: this.amadeusApi.verifyRunningLocal(), logs: this.amadeusApi.verifyDbLogs() }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == undefined) {
+        console.debug('-- settings dialog was closed, no updates saved');
+      } else {
+        console.debug('-- settings dialog was closed, syncing credentials');
+
+        // syncing updates from settings dialog
+        this.credentials = result.credentials;
+        this.resetParams(result.local);
+        this.amadeusApi.verifyDbLogs(result.logs);
+      }
+    });
+  }
+
+   // opening database modal window
+   openDatabaseDialog(): void {
+    console.debug('-- opening database dialog');
+    const dialogRef = this.dialog.open(DatabaseDialog, {
+      width: '500px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
