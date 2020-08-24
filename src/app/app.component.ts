@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
   // safety score titles, variable locators and assotiated icons
   safetyScoreSettings: SafetyScoreParameters[] = [
     { title: 'Women\'s safety', locator: 'women', icon: 'face' },
-    { title: 'Physical harm', locator: 'physicalHarm', icon: 'sports_kabaddi' },
+    { title: 'Physical harm', locator: 'physicalHarm', icon: 'pan_tool' },
     { title: 'Theft', locator: 'theft', icon: 'account_balance_wallet' },
     { title: 'Political freedom', locator: 'politicalFreedom', icon: 'account_balance' },
     { title: 'Health & Medical', locator: 'medical', icon: 'healing' },
